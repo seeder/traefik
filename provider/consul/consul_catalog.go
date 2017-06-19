@@ -214,10 +214,20 @@ func (p *CatalogProvider) getFrontendRule(service serviceUpdate) string {
 }
 
 func (p *CatalogProvider) getBackendAddress(node *api.ServiceEntry) string {
+    var selected_address string
+	var return_address string
 	if node.Service.Address != "" {
-		return node.Service.Address
+		selected_address = node.Service.Address
+	} else {
+		selected_address = node.Node.Address
 	}
-	return node.Node.Address
+	if strings.Contains(selected_address, ":") {
+		s := []string{"[", selected_address, "]"}
+		return_address = strings.Join(s,"")
+	} else { 
+		return_address = selected_address
+	}
+	return return_address
 }
 
 func (p *CatalogProvider) getBackendName(node *api.ServiceEntry, index int) string {
